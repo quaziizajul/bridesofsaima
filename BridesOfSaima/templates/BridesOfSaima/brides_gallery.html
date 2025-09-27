@@ -1,0 +1,873 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Brides Gallery - Brides of Saima</title>
+    <meta name="description" content="Stunning makeup transformations by Brides of Saima. View our gallery of beautiful brides.">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'BridesOfSaima/css/style.css' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;600;700&family=Playfair+Display:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/x-icon" href="{% static 'BridesOfSaima/images/favicon.ico' %}">
+    <style>
+        body {
+            background: linear-gradient(135deg, #f8f4f0 0%, #fff 50%, #f9f6f2 100%);
+            min-height: 100vh;
+        }
+        
+        .gallery-header {
+            background: linear-gradient(
+                135deg,
+                rgba(212, 175, 55, 0.1) 0%,
+                rgba(0, 0, 0, 0.6) 50%,
+                rgba(212, 175, 55, 0.1) 100%
+            ), url('{% static "BridesOfSaima/images/Bride1.jpg" %}');
+            background-size: cover;
+            background-position: center;
+            color: white;
+            padding: 80px 0 30px 0;
+            text-align: center;
+        }
+        
+        .gallery-title {
+            font-family: 'Dancing Script', cursive;
+            font-size: 3rem;
+            color: #d4af37;
+            margin-bottom: 0.5rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+        
+        .gallery-subtitle {
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+        }
+        
+        .bride-card {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            overflow: hidden;
+            transition: all 0.3s ease;
+            margin-bottom: 30px;
+            border: 1px solid rgba(212, 175, 55, 0.2);
+        }
+        
+        .bride-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+            border-color: #d4af37;
+        }
+        
+        a:hover .bride-card {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+            border-color: #d4af37;
+        }
+        
+        a:hover .bride-card .bride-name {
+            color: #b8941f;
+        }
+        
+        .bride-image {
+            width: 100%;
+            height: auto;
+            min-height: 300px;
+            max-height: 500px;
+            object-fit: contain;
+            object-position: center;
+            transition: transform 0.3s ease;
+            background: #f8f4f0;
+        }
+        
+        .bride-card:hover .bride-image {
+            transform: scale(1.05);
+        }
+        
+        .bride-info {
+            padding: 25px;
+            text-align: center;
+        }
+        
+        .bride-name {
+            font-family: 'Dancing Script', cursive;
+            font-size: 2rem;
+            color: #d4af37;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+        
+        .bride-location {
+            color: #666;
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+        
+        .bride-date {
+            color: #888;
+            font-size: 0.95rem;
+            margin-bottom: 1rem;
+        }
+        
+        .bride-tagline {
+            font-style: italic;
+            color: #555;
+            font-size: 1rem;
+            line-height: 1.4;
+            border-top: 1px solid #f0f0f0;
+            padding-top: 15px;
+        }
+        
+        .back-button {
+            background: linear-gradient(45deg, #d4af37, #f4e4a6);
+            border: none;
+            color: white;
+            padding: 8px 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            border-radius: 20px;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.3s ease;
+            margin-bottom: 1.5rem;
+        }
+        
+        .back-button:hover {
+            background: linear-gradient(45deg, #b8941f, #d4af37);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(212, 175, 55, 0.4);
+            color: white;
+        }
+        
+        .no-brides {
+            text-align: center;
+            padding: 60px 20px;
+            color: #666;
+        }
+        
+        .no-brides h3 {
+            font-family: 'Dancing Script', cursive;
+            color: #d4af37;
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .decorative-border {
+            width: 80px;
+            height: 2px;
+            background: linear-gradient(45deg, #d4af37, #f4e4a6);
+            margin: 0 auto 1rem auto;
+            border-radius: 2px;
+        }
+        
+        @media (max-width: 768px) {
+            .gallery-title {
+                font-size: 1.8rem;
+            }
+            
+            .gallery-header {
+                padding: 80px 0 15px 0;
+            }
+            
+            .gallery-subtitle {
+                font-size: 1rem;
+                margin-bottom: 0.5rem;
+            }
+            
+            .bride-image {
+                min-height: 280px;
+                max-height: 450px;
+                height: auto;
+            }
+            
+            .bride-card {
+                margin-bottom: 20px;
+            }
+            
+            .bride-info {
+                padding: 20px;
+            }
+            
+            .bride-name {
+                font-size: 1.6rem;
+            }
+            
+            .back-button {
+                padding: 6px 16px;
+                font-size: 0.8rem;
+                margin-bottom: 1rem;
+            }
+            
+            /* Mobile Back Button Styles */
+            .back-btn-mobile {
+                padding: 4px 8px !important;
+                font-size: 0.85rem !important;
+                min-width: 30px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+            
+            .navbar-brand {
+                font-size: 1.3rem !important;
+            }
+            
+            /* Force single line navbar */
+            .navbar .container {
+                flex-wrap: nowrap !important;
+            }
+            
+            .navbar-nav {
+                flex-direction: row !important;
+                gap: 0.5rem;
+            }
+            
+            .container {
+                padding-left: 10px;
+                padding-right: 10px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .gallery-title {
+                font-size: 1.5rem;
+                margin-bottom: 0.2rem;
+            }
+            
+            .gallery-header {
+                padding: 70px 0 10px 0;
+            }
+            
+            .gallery-subtitle {
+                font-size: 0.9rem;
+                margin-bottom: 0.3rem;
+            }
+            
+            .decorative-border {
+                width: 60px;
+                height: 1px;
+                margin: 0 auto 0.5rem auto;
+            }
+            
+            .bride-image {
+                min-height: 260px;
+                max-height: 400px;
+                height: auto;
+            }
+            
+            .bride-name {
+                font-size: 1.4rem;
+            }
+            
+            .bride-location, .bride-date {
+                font-size: 0.95rem;
+            }
+            
+            .bride-tagline {
+                font-size: 0.9rem;
+            }
+            
+            /* Extra small mobile - improve back button further */
+            .back-btn-mobile {
+                padding: 5px 10px !important;
+                font-size: 0.9rem !important;
+                min-width: 32px;
+            }
+            
+            .navbar-brand {
+                font-size: 1.1rem !important;
+            }
+            
+            /* Ensure navbar height is minimal on small screens */
+            .navbar {
+                min-height: 50px !important;
+                padding: 0.3rem 0 !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg fixed-top" style="background: rgba(0, 0, 0, 0.9); backdrop-filter: blur(10px); z-index: 1000; min-height: 60px; padding: 0.5rem 0;">
+        <div class="container d-flex align-items-center justify-content-between flex-nowrap">
+            <a class="navbar-brand" href="{% url 'BridesOfSaima:homepage' %}" style="color: #d4af37; font-family: 'Dancing Script', cursive; font-size: 1.6rem; font-weight: 700; margin: 0; white-space: nowrap;">
+                Brides of Saima
+            </a>
+            
+            <div class="navbar-nav d-flex align-items-center flex-row flex-nowrap">
+                <!-- Back to Home Button -->
+                <a href="{% url 'BridesOfSaima:homepage' %}" class="btn btn-outline-light btn-sm me-2 back-btn-mobile" style="color: #d4af37; border-color: #d4af37; padding: 3px 8px; font-size: 0.75rem; line-height: 1.2;" title="Back to Home">
+                    ←
+                </a>
+                
+                <!-- Admin Icon/Login -->
+                {% if user.is_authenticated %}
+                    <div class="dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" style="color: #d4af37; font-size: 1.2rem; padding: 5px;">
+                            {% if user.is_staff %}
+                                👑
+                            {% else %}
+                                👤
+                            {% endif %}
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end" style="background: rgba(0, 0, 0, 0.9); border: 1px solid #d4af37;">
+                            <li>
+                                <span class="dropdown-item-text" style="color: #d4af37; font-size: 0.9rem;">
+                                    {{ user.username }}
+                                    {% if user.is_staff %}
+                                        <small class="badge bg-warning text-dark ms-1">Admin</small>
+                                    {% endif %}
+                                </span>
+                            </li>
+                            <li><hr class="dropdown-divider" style="border-color: #d4af37;"></li>
+                            <li>
+                                <form method="post" action="{% url 'logout' %}" style="margin: 0;">
+                                    {% csrf_token %}
+                                    <button type="submit" class="dropdown-item" style="color: #fff; background: none; border: none; font-size: 0.9rem;">
+                                        🚪 Logout
+                                    </button>
+                                </form>
+                            </li>
+                        </ul>
+                    </div>
+                {% else %}
+                    <a class="nav-link" href="{% url 'login' %}" style="color: #d4af37; font-size: 1.2rem; padding: 5px;" title="Admin Login">
+                        🔐
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+    </nav>
+
+    <!-- Gallery Header -->
+    <div class="gallery-header">
+        <div class="container">
+            <h1 class="gallery-title">My Brides Gallery</h1>
+            <div class="decorative-border"></div>
+            <p class="gallery-subtitle">Celebrating Beauty, Creating Memories</p>
+        </div>
+    </div>
+
+    <!-- Gallery Content -->
+    <div class="container py-5">
+        <!-- Back button moved to navbar -->
+
+        {% if brides %}
+            <div class="row">
+                {% for bride in brides %}
+                    <div class="col-lg-4 col-md-6 col-sm-12">
+                        <div class="bride-card" onclick="openCarousel({{ bride.pk }})">
+                            <div class="position-relative">
+                                {% if bride.image %}
+                                    <img src="{{ bride.image.url }}" alt="{{ bride.name }}" class="bride-image" loading="lazy">
+                                {% endif %}
+                                
+                                <!-- Image count overlay -->
+                                <div class="position-absolute top-0 end-0 m-2">
+                                    <span class="badge bg-dark bg-opacity-75 text-white">
+                                        📷 {{ bride.get_total_images_count }}
+                                    </span>
+                                </div>
+                                
+                                <!-- Click to view overlay -->
+                                <div class="position-absolute top-50 start-50 translate-middle">
+                                    <div class="bg-dark bg-opacity-75 text-white px-3 py-2 rounded">
+                                        <i class="fas fa-expand"></i> View Photos
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="bride-info">
+                                <h3 class="bride-name">{{ bride.name }}</h3>
+                                <div class="bride-location">📍 {{ bride.location }}</div>
+                                <div class="bride-date">📅 {{ bride.event_date|date:"F d, Y" }}</div>
+                                <div class="bride-tagline">"{{ bride.tagline }}"</div>
+                                <div class="mt-2">
+                                    <small class="text-muted">Click to view {{ bride.get_total_images_count }} photo{{ bride.get_total_images_count|pluralize }}</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="no-brides">
+                <h3>Coming Soon!</h3>
+                <div class="decorative-border"></div>
+                <p>Our beautiful brides gallery will be showcased here soon.</p>
+                {% if user.is_authenticated and user.is_staff %}
+                    <p class="mt-3">
+                        <a href="/admin/BridesOfSaima/bride/add/" class="back-button">
+                            Add First Bride
+                        </a>
+                    </p>
+                {% endif %}
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- Full Screen Carousel Modal -->
+    <div id="fullscreenCarousel" class="fullscreen-modal">
+        <div class="fullscreen-carousel-container">
+            <!-- Close button -->
+            <button class="close-btn" onclick="closeCarousel()">
+                <span>&times;</span>
+            </button>
+            
+            <!-- Carousel -->
+            <div id="brideCarouselModal" class="carousel slide">
+                <div class="carousel-inner" id="carouselContent">
+                    <!-- Dynamic content will be loaded here -->
+                </div>
+                
+                <!-- Controls -->
+                <button class="carousel-control-prev" type="button">
+                    <span class="carousel-control-prev-icon"></span>
+                </button>
+                <button class="carousel-control-next" type="button">
+                    <span class="carousel-control-next-icon"></span>
+                </button>
+                
+                <!-- Indicators -->
+                <div class="carousel-indicators" id="carouselIndicators">
+                    <!-- Dynamic indicators will be loaded here -->
+                </div>
+                
+                <!-- Image counter -->
+                <div class="image-counter-modal">
+                    <span id="currentImageIndex">1</span> / <span id="totalImages">1</span>
+                </div>
+                
+                <!-- Bride info overlay -->
+                <div class="bride-info-overlay">
+                    <div class="bride-info-content">
+                        <h3 id="brideNameModal"></h3>
+                        <p id="brideLocationModal"></p>
+                        <p id="brideDateModal"></p>
+                        <p id="brideTaglineModal"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        .fullscreen-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.95);
+            z-index: 9999;
+            overflow: hidden;
+        }
+        
+        .fullscreen-carousel-container {
+            width: 100%;
+            height: 100%;
+            position: relative;
+        }
+        
+        .close-btn {
+            position: absolute;
+            top: 20px;
+            right: 30px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            font-size: 2rem;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            cursor: pointer;
+            z-index: 10001;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .close-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: rgba(255, 255, 255, 0.5);
+            transform: scale(1.1);
+        }
+        
+        .fullscreen-modal .carousel {
+            width: 100%;
+            height: 100vh;
+        }
+        
+        .fullscreen-modal .carousel-inner {
+            height: 100%;
+        }
+        
+        .fullscreen-modal .carousel-item {
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 0.3s ease-in-out;
+        }
+        
+        .fullscreen-modal .carousel-item:not(.active) {
+            opacity: 0;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+        }
+        
+        .fullscreen-modal .carousel-item.active {
+            opacity: 1;
+            position: relative;
+        }
+        
+        .fullscreen-modal .carousel-item img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            border-radius: 0;
+        }
+        
+        .fullscreen-modal .carousel-control-prev,
+        .fullscreen-modal .carousel-control-next {
+            width: 80px;
+            height: 80px;
+            background: rgba(212, 175, 55, 0.8);
+            border-radius: 50%;
+            top: 50%;
+            transform: translateY(-50%);
+            border: none;
+            z-index: 10002;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            opacity: 1;
+            position: absolute;
+        }
+        
+        .fullscreen-modal .carousel-control-prev {
+            left: 30px;
+        }
+        
+        .fullscreen-modal .carousel-control-next {
+            right: 30px;
+        }
+        
+        .fullscreen-modal .carousel-control-prev:hover,
+        .fullscreen-modal .carousel-control-next:hover {
+            background: rgba(212, 175, 55, 1);
+            transform: translateY(-50%) scale(1.1);
+        }
+        
+        .fullscreen-modal .carousel-control-prev-icon,
+        .fullscreen-modal .carousel-control-next-icon {
+            width: 30px;
+            height: 30px;
+        }
+        
+        .fullscreen-modal .carousel-indicators {
+            bottom: 20px;
+        }
+        
+        .fullscreen-modal .carousel-indicators [data-bs-target] {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background-color: rgba(212, 175, 55, 0.6);
+            border: 2px solid rgba(255, 255, 255, 0.5);
+        }
+        
+        .fullscreen-modal .carousel-indicators .active {
+            background-color: #d4af37;
+            border-color: white;
+        }
+        
+        .image-counter-modal {
+            position: absolute;
+            top: 30px;
+            left: 30px;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-size: 1rem;
+            z-index: 10001;
+        }
+        
+        .bride-info-overlay {
+            position: absolute;
+            bottom: 30px;
+            left: 30px;
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            max-width: 400px;
+            z-index: 10001;
+        }
+        
+        .bride-info-content h3 {
+            font-family: 'Dancing Script', cursive;
+            color: #d4af37;
+            font-size: 1.8rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .bride-info-content p {
+            margin-bottom: 0.3rem;
+            font-size: 0.9rem;
+        }
+        
+        @media (max-width: 768px) {
+            .close-btn {
+                width: 40px;
+                height: 40px;
+                font-size: 1.5rem;
+                top: 15px;
+                right: 15px;
+            }
+            
+            .fullscreen-modal .carousel-control-prev,
+            .fullscreen-modal .carousel-control-next {
+                width: 60px;
+                height: 60px;
+            }
+            
+            .fullscreen-modal .carousel-control-prev {
+                left: 15px;
+            }
+            
+            .fullscreen-modal .carousel-control-next {
+                right: 15px;
+            }
+            
+            .image-counter-modal {
+                top: 15px;
+                left: 15px;
+                font-size: 0.9rem;
+                padding: 8px 16px;
+            }
+            
+            .bride-info-overlay {
+                bottom: 15px;
+                left: 15px;
+                right: 15px;
+                max-width: none;
+                padding: 15px;
+            }
+            
+            .bride-info-content h3 {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        // Bride data for carousel
+        const brideData = {
+            {% for bride in brides %}
+            {{ bride.pk }}: {
+                name: "{{ bride.name|escapejs }}",
+                location: "{{ bride.location|escapejs }}",
+                date: "{{ bride.event_date|date:'F d, Y' }}",
+                tagline: "{{ bride.tagline|escapejs }}",
+                images: [
+                    {% for image in bride.get_all_images %}
+                    {
+                        url: "{{ image.url|escapejs }}",
+                        caption: "{{ image.caption|escapejs }}"
+                    }{% if not forloop.last %},{% endif %}
+                    {% endfor %}
+                ]
+            }{% if not forloop.last %},{% endif %}
+            {% endfor %}
+        };
+        
+        // Debug: Log bride data on page load
+        console.log('Bride data loaded:', brideData);
+        
+        let currentCarouselInstance = null;
+        let currentSlideIndex = 0;
+        let currentImages = [];
+        
+        function openCarousel(brideId) {
+            const bride = brideData[brideId];
+            if (!bride) return;
+            
+            // Store current images and reset index
+            currentImages = bride.images;
+            currentSlideIndex = 0;
+            
+            // Update bride info
+            document.getElementById('brideNameModal').textContent = bride.name;
+            document.getElementById('brideLocationModal').textContent = '📍 ' + bride.location;
+            document.getElementById('brideDateModal').textContent = '📅 ' + bride.date;
+            document.getElementById('brideTaglineModal').textContent = '"' + bride.tagline + '"';
+            
+            // Update image counter
+            document.getElementById('totalImages').textContent = bride.images.length;
+            document.getElementById('currentImageIndex').textContent = '1';
+            
+            // Create carousel content
+            const carouselContent = document.getElementById('carouselContent');
+            const carouselIndicators = document.getElementById('carouselIndicators');
+            
+            // Clear existing content
+            carouselContent.innerHTML = '';
+            carouselIndicators.innerHTML = '';
+            
+            // Destroy existing carousel instance if it exists
+            if (currentCarouselInstance) {
+                try {
+                    currentCarouselInstance.dispose();
+                } catch (e) {
+                    console.log('Error disposing carousel:', e);
+                }
+                currentCarouselInstance = null;
+            }
+            
+            // Add images
+            bride.images.forEach((image, index) => {
+                // Create carousel item
+                const item = document.createElement('div');
+                item.className = 'carousel-item' + (index === 0 ? ' active' : '');
+                item.innerHTML = `<img src="${image.url}" alt="${image.caption}" loading="lazy">`;
+                carouselContent.appendChild(item);
+                
+                // Create indicator
+                const indicator = document.createElement('button');
+                indicator.type = 'button';
+                indicator.className = index === 0 ? 'active' : '';
+                indicator.addEventListener('click', () => goToSlide(index));
+                carouselIndicators.appendChild(indicator);
+            });
+            
+            // Show modal
+            document.getElementById('fullscreenCarousel').style.display = 'block';
+            document.body.style.overflow = 'hidden';
+            
+            console.log('Opening carousel with', bride.images.length, 'images');
+        }
+        
+        function goToSlide(index) {
+            if (index < 0 || index >= currentImages.length) return;
+            
+            // Update all carousel items
+            const items = document.querySelectorAll('#carouselContent .carousel-item');
+            const indicators = document.querySelectorAll('#carouselIndicators button');
+            
+            // Remove active class from all items and indicators
+            items.forEach(item => item.classList.remove('active'));
+            indicators.forEach(indicator => indicator.classList.remove('active'));
+            
+            // Add active class to current item and indicator
+            if (items[index]) {
+                items[index].classList.add('active');
+            }
+            if (indicators[index]) {
+                indicators[index].classList.add('active');
+            }
+            
+            // Update current index and counter
+            currentSlideIndex = index;
+            document.getElementById('currentImageIndex').textContent = index + 1;
+            
+            console.log('Moved to slide', index + 1, 'of', currentImages.length);
+        }
+        
+        function nextSlide() {
+            const nextIndex = (currentSlideIndex + 1) % currentImages.length;
+            goToSlide(nextIndex);
+        }
+        
+        function prevSlide() {
+            const prevIndex = currentSlideIndex === 0 ? currentImages.length - 1 : currentSlideIndex - 1;
+            goToSlide(prevIndex);
+        }
+        
+        function closeCarousel() {
+            document.getElementById('fullscreenCarousel').style.display = 'none';
+            document.body.style.overflow = 'auto';
+            
+            // Reset carousel state
+            currentSlideIndex = 0;
+            currentImages = [];
+            
+            // Dispose of carousel instance if it exists
+            if (currentCarouselInstance) {
+                try {
+                    currentCarouselInstance.dispose();
+                } catch (e) {
+                    console.log('Error disposing carousel:', e);
+                }
+                currentCarouselInstance = null;
+            }
+        }
+        
+        // Close on escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeCarousel();
+            }
+        });
+        
+        // Close on outside click
+        document.getElementById('fullscreenCarousel').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeCarousel();
+            }
+        });
+        
+        // Event handlers for carousel controls
+        function handlePrevClick(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            console.log('Previous button clicked');
+            prevSlide();
+        }
+        
+        function handleNextClick(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            console.log('Next button clicked');
+            nextSlide();
+        }
+        
+        // Add event listeners when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            const prevBtn = document.querySelector('#brideCarouselModal .carousel-control-prev');
+            const nextBtn = document.querySelector('#brideCarouselModal .carousel-control-next');
+            
+            if (prevBtn && nextBtn) {
+                prevBtn.addEventListener('click', handlePrevClick);
+                nextBtn.addEventListener('click', handleNextClick);
+                console.log('Carousel control event listeners added on page load');
+            }
+        });
+        
+        // Keyboard navigation
+        document.addEventListener('keydown', function(e) {
+            const modal = document.getElementById('fullscreenCarousel');
+            if (modal.style.display === 'block') {
+                if (e.key === 'ArrowLeft') {
+                    e.preventDefault();
+                    prevSlide();
+                } else if (e.key === 'ArrowRight') {
+                    e.preventDefault();
+                    nextSlide();
+                }
+            }
+        });
+    </script>
+</body>
+</html>

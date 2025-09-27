@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Brides of Saima - Where Dreams Begin Their Journey</title>
+    <meta name="description" content="Discover the most elegant bridal destination. Exquisite wedding dresses, stunning jewelry, and premium accessories for your perfect moment.">
+    {% load static %}
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'BridesOfSaima/css/style.css' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;600;700&family=Playfair+Display:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/x-icon" href="{% static 'BridesOfSaima/images/favicon.ico' %}">
+</head>
+<body>
+    <!-- Loading Animation -->
+    <div class="loading-overlay">
+        <div class="loading-spinner"></div>
+    </div>
+
+    <!-- Floating Decorative Elements -->
+    <div class="floating-elements">
+        <div class="floating-element">💎</div>
+        <div class="floating-element">👑</div>
+        <div class="floating-element">🌹</div>
+    </div>
+
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg fixed-top" style="background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(10px); z-index: 1000; min-height: 60px; padding: 0.5rem 0;">
+        <div class="container d-flex align-items-center justify-content-between flex-nowrap">
+            <a class="navbar-brand" href="{% url 'BridesOfSaima:homepage' %}" style="color: #d4af37; font-family: 'Dancing Script', cursive; font-size: 1.6rem; font-weight: 700; margin: 0; white-space: nowrap;">
+                Brides of Saima
+            </a>
+            
+            <div class="navbar-nav d-flex align-items-center flex-row flex-nowrap">
+                <!-- Admin Icon/Login -->
+                {% if user.is_authenticated %}
+                    <div class="dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" style="color: #d4af37; font-size: 1.2rem; padding: 5px;">
+                            {% if user.is_staff %}
+                                👑
+                            {% else %}
+                                👤
+                            {% endif %}
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end" style="background: rgba(0, 0, 0, 0.9); border: 1px solid #d4af37;">
+                            <li>
+                                <span class="dropdown-item-text" style="color: #d4af37; font-size: 0.9rem;">
+                                    {{ user.username }}
+                                    {% if user.is_staff %}
+                                        <small class="badge bg-warning text-dark ms-1">Admin</small>
+                                    {% endif %}
+                                </span>
+                            </li>
+                            <li><hr class="dropdown-divider" style="border-color: #d4af37;"></li>
+                            <li>
+                                <form method="post" action="{% url 'logout' %}" style="margin: 0;">
+                                    {% csrf_token %}
+                                    <button type="submit" class="dropdown-item" style="color: #fff; background: none; border: none; font-size: 0.9rem;">
+                                        🚪 Logout
+                                    </button>
+                                </form>
+                            </li>
+                        </ul>
+                    </div>
+                {% else %}
+                    <a class="nav-link" href="{% url 'login' %}" style="color: #d4af37; font-size: 1.2rem; padding: 5px;" title="Admin Login">
+                        🔐
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+    </nav>
+
+    <div class="hero-container">
+        <div class="floating-particles"></div>
+        <div class="overlay">
+            <div class="content">
+                <h1 class="main-title">Brides of Saima</h1>
+                <div class="decorative-border"></div>
+                <p class="subtitle">Where Dreams Begin Their Journey</p>
+                <div class="welcome-text">
+                    <p>Welcome to the most elegant bridal destination</p>
+                    <p>Discover your perfect moment</p>
+                </div>
+                <div class="cta-buttons">
+                    <button class="btn btn-primary" onclick="window.location.href='{% url 'BridesOfSaima:brides_gallery' %}'">My Brides</button>
+                    {% if user.is_authenticated and user.is_staff %}
+                        <button class="btn btn-secondary" onclick="window.location.href='{% url 'BridesOfSaima:invoice_create' %}'">Generate Invoice</button>
+                        <button class="btn btn-outline-light" onclick="window.location.href='{% url 'BridesOfSaima:customer_create' %}'">Add Customer</button>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="features-section">
+        <div class="container">
+            <div class="decorative-border"></div>
+            <div class="features-grid">
+                <div class="feature scroll-animate">
+                    <h3>� Bridal Makeup</h3>
+                    <p>Stunning bridal makeup artistry that enhances your natural beauty for your special day. Professional techniques and premium products for a flawless, radiant look that lasts.</p>
+                </div>
+                <div class="feature scroll-animate">
+                    <h3>� Engagement Makeup</h3>
+                    <p>Perfect makeup for your engagement ceremony with elegant and sophisticated looks that capture the joy and excitement of this milestone moment.</p>
+                </div>
+                <div class="feature scroll-animate">
+                    <h3>🎉 Haldi & Party Makeup</h3>
+                    <p>Vibrant and festive makeup for Haldi ceremonies and party celebrations. Colorful, long-lasting looks that complement the joyous spirit of pre-wedding festivities.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Remove loading overlay after page loads
+        window.addEventListener('load', function() {
+            setTimeout(() => {
+                const loadingOverlay = document.querySelector('.loading-overlay');
+                if (loadingOverlay) {
+                    loadingOverlay.style.display = 'none';
+                }
+            }, 2000);
+        });
+
+        // Scroll animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver(function(entries) {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('active');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.scroll-animate').forEach(element => {
+            observer.observe(element);
+        });
+    </script>
+
+    <!-- Instagram QR Code Section - At Very Bottom -->
+    <div class="instagram-qr-center">
+        <div class="container">
+            <div class="decorative-border"></div>
+            <h4 style="color: #d4af37; font-family: 'Dancing Script', cursive; font-size: 2.5rem; margin-bottom: 1rem;">Follow Us on Instagram</h4>
+            <p style="color: #666; font-size: 1.2rem; margin-bottom: 2rem;">Scan the QR code to see our latest bridal transformations and behind-the-scenes moments</p>
+            <div class="qr-code-container">
+                <img src="{% static 'BridesOfSaima/images/instaQR.png' %}" alt="Instagram QR Code">
+            </div>
+            <p style="color: #d4af37; font-weight: 600; margin-top: 1rem; font-size: 1.1rem;">@bridesofsaima</p>
+            <div class="decorative-border" style="margin-top: 2rem;"></div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

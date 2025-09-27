@@ -1,0 +1,559 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ bride.name }} - Brides of Saima</title>
+    <meta name="description" content="View {{ bride.name }}'s stunning makeup transformation by Brides of Saima.">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'BridesOfSaima/css/style.css' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;600;700&family=Playfair+Display:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/x-icon" href="{% static 'BridesOfSaima/images/favicon.ico' %}">
+    <style>
+        body {
+            background: linear-gradient(135deg, #f8f4f0 0%, #fff 50%, #f9f6f2 100%);
+            min-height: 100vh;
+        }
+        
+        .detail-header {
+            background: linear-gradient(
+                135deg,
+                rgba(212, 175, 55, 0.1) 0%,
+                rgba(0, 0, 0, 0.6) 50%,
+                rgba(212, 175, 55, 0.1) 100%
+            ), url('{% static "BridesOfSaima/images/Bride1.jpg" %}');
+            background-size: cover;
+            background-position: center;
+            color: white;
+            padding: 90px 0 25px 0;
+            text-align: center;
+        }
+        
+        .bride-name-title {
+            font-family: 'Dancing Script', cursive;
+            font-size: 2.8rem;
+            color: #d4af37;
+            margin-bottom: 0.3rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+        
+        .bride-details {
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+        }
+        
+        .carousel-container {
+            max-width: 900px;
+            margin: 0 auto;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+            border-radius: 20px;
+            overflow: hidden;
+            background: white;
+        }
+        
+        .carousel-inner {
+            background: #f8f4f0;
+        }
+        
+        .carousel-image {
+            width: 100%;
+            height: 600px;
+            object-fit: contain;
+            object-position: center;
+            background: #f8f4f0;
+        }
+        
+        .carousel-caption {
+            background: linear-gradient(transparent, rgba(0,0,0,0.7));
+            padding: 20px;
+            border-radius: 0;
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+        }
+        
+        .carousel-caption h5 {
+            font-family: 'Dancing Script', cursive;
+            font-size: 1.8rem;
+            color: #d4af37;
+            margin-bottom: 0.5rem;
+        }
+        
+        .carousel-control-prev,
+        .carousel-control-next {
+            width: 60px;
+            height: 60px;
+            background: rgba(212, 175, 55, 0.8);
+            border-radius: 50%;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+        
+        .carousel-control-prev {
+            left: 20px;
+        }
+        
+        .carousel-control-next {
+            right: 20px;
+        }
+        
+        .carousel-control-prev:hover,
+        .carousel-control-next:hover {
+            background: rgba(212, 175, 55, 1);
+        }
+        
+        .carousel-indicators {
+            bottom: 10px;
+        }
+        
+        .carousel-indicators [data-bs-target] {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background-color: rgba(212, 175, 55, 0.6);
+            border: 2px solid rgba(255, 255, 255, 0.5);
+        }
+        
+        .carousel-indicators .active {
+            background-color: #d4af37;
+            border-color: white;
+        }
+        
+        .bride-info-card {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            padding: 30px;
+            margin: 30px 0;
+            border: 1px solid rgba(212, 175, 55, 0.2);
+        }
+        
+        .info-title {
+            font-family: 'Dancing Script', cursive;
+            font-size: 2rem;
+            color: #d4af37;
+            margin-bottom: 1rem;
+        }
+        
+        .info-detail {
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+        }
+        
+        .info-label {
+            font-weight: 600;
+            color: #666;
+            display: inline-block;
+            width: 120px;
+        }
+        
+        .tagline-card {
+            background: linear-gradient(135deg, #f8f4f0, #fff);
+            border-left: 4px solid #d4af37;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 0 10px 10px 0;
+            font-style: italic;
+            font-size: 1.1rem;
+            color: #555;
+        }
+        
+        .back-button {
+            background: linear-gradient(45deg, #d4af37, #f4e4a6);
+            border: none;
+            color: white;
+            padding: 8px 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            border-radius: 20px;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.3s ease;
+            margin-bottom: 1.5rem;
+        }
+        
+        .back-button:hover {
+            background: linear-gradient(45deg, #b8941f, #d4af37);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(212, 175, 55, 0.4);
+            color: white;
+        }
+        
+        .decorative-border {
+            width: 80px;
+            height: 2px;
+            background: linear-gradient(45deg, #d4af37, #f4e4a6);
+            margin: 0 auto 1rem auto;
+            border-radius: 2px;
+        }
+        
+        .image-counter {
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 0.9rem;
+            z-index: 10;
+        }
+        
+        @media (max-width: 768px) {
+            .bride-name-title {
+                font-size: 1.8rem;
+            }
+            
+            .detail-header {
+                padding: 80px 0 15px 0;
+            }
+            
+            .bride-details {
+                font-size: 1rem;
+                margin-bottom: 0.3rem;
+            }
+            
+            .carousel-image {
+                height: 450px;
+            }
+            
+            .carousel-control-prev,
+            .carousel-control-next {
+                width: 45px;
+                height: 45px;
+            }
+            
+            .carousel-control-prev {
+                left: 5px;
+            }
+            
+            .carousel-control-next {
+                right: 5px;
+            }
+            
+            .bride-info-card {
+                padding: 25px 20px;
+                margin: 20px 0;
+            }
+            
+            .info-title {
+                font-size: 1.6rem;
+            }
+            
+            .info-detail {
+                font-size: 1rem;
+            }
+            
+            .info-label {
+                width: 100px;
+                font-size: 0.9rem;
+            }
+            
+            .back-button {
+                padding: 6px 16px;
+                font-size: 0.8rem;
+                margin-bottom: 1rem;
+            }
+            
+            /* Mobile Back Button Styles */
+            .back-btn-mobile {
+                padding: 4px 8px !important;
+                font-size: 0.85rem !important;
+                min-width: 30px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+            
+            .navbar-brand {
+                font-size: 1.3rem !important;
+            }
+            
+            /* Force single line navbar */
+            .navbar .container {
+                flex-wrap: nowrap !important;
+            }
+            
+            .navbar-nav {
+                flex-direction: row !important;
+                gap: 0.5rem;
+            }
+            
+            .container {
+                padding-left: 10px;
+                padding-right: 10px;
+            }
+            
+            .carousel-container {
+                margin: 0 -5px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .bride-name-title {
+                font-size: 1.5rem;
+                margin-bottom: 0.2rem;
+            }
+            
+            .detail-header {
+                padding: 70px 0 10px 0;
+            }
+            
+            .bride-details {
+                font-size: 0.9rem;
+                margin-bottom: 0.2rem;
+            }
+            
+            .decorative-border {
+                width: 60px;
+                height: 1px;
+                margin: 0 auto 0.5rem auto;
+            }
+            
+            .carousel-image {
+                height: 350px;
+            }
+            
+            .carousel-control-prev,
+            .carousel-control-next {
+                width: 35px;
+                height: 35px;
+            }
+            
+            .bride-info-card {
+                padding: 20px 15px;
+            }
+            
+            .info-title {
+                font-size: 1.4rem;
+            }
+            
+            .info-detail {
+                font-size: 0.9rem;
+                margin-bottom: 0.8rem;
+            }
+            
+            .info-label {
+                width: 90px;
+                font-size: 0.85rem;
+            }
+            
+            .tagline-card {
+                padding: 15px;
+                font-size: 1rem;
+            }
+            
+            .image-counter {
+                font-size: 0.8rem;
+                padding: 6px 12px;
+            }
+            
+            /* Extra small mobile - improve back button further */
+            .back-btn-mobile {
+                padding: 5px 10px !important;
+                font-size: 0.9rem !important;
+                min-width: 32px;
+            }
+            
+            .navbar-brand {
+                font-size: 1.1rem !important;
+            }
+            
+            /* Ensure navbar height is minimal on small screens */
+            .navbar {
+                min-height: 50px !important;
+                padding: 0.3rem 0 !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg fixed-top" style="background: rgba(0, 0, 0, 0.9); backdrop-filter: blur(10px); z-index: 1000; min-height: 60px; padding: 0.5rem 0;">
+        <div class="container d-flex align-items-center justify-content-between flex-nowrap">
+            <a class="navbar-brand" href="{% url 'BridesOfSaima:homepage' %}" style="color: #d4af37; font-family: 'Dancing Script', cursive; font-size: 1.6rem; font-weight: 700; margin: 0; white-space: nowrap;">
+                Brides of Saima
+            </a>
+            
+            <div class="navbar-nav d-flex align-items-center flex-row flex-nowrap">
+                <!-- Back to Gallery Button -->
+                <a href="{% url 'BridesOfSaima:brides_gallery' %}" class="btn btn-outline-light btn-sm me-2 back-btn-mobile" style="color: #d4af37; border-color: #d4af37; padding: 3px 8px; font-size: 0.75rem; line-height: 1.2;" title="Back to Gallery">
+                    ←
+                </a>
+                
+                <!-- Admin Icon/Login -->
+                {% if user.is_authenticated %}
+                    <div class="dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" style="color: #d4af37; font-size: 1.2rem; padding: 5px;">
+                            {% if user.is_staff %}
+                                👑
+                            {% else %}
+                                👤
+                            {% endif %}
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end" style="background: rgba(0, 0, 0, 0.9); border: 1px solid #d4af37;">
+                            <li>
+                                <span class="dropdown-item-text" style="color: #d4af37; font-size: 0.9rem;">
+                                    {{ user.username }}
+                                    {% if user.is_staff %}
+                                        <small class="badge bg-warning text-dark ms-1">Admin</small>
+                                    {% endif %}
+                                </span>
+                            </li>
+                            <li><hr class="dropdown-divider" style="border-color: #d4af37;"></li>
+                            <li>
+                                <form method="post" action="{% url 'logout' %}" style="margin: 0;">
+                                    {% csrf_token %}
+                                    <button type="submit" class="dropdown-item" style="color: #fff; background: none; border: none; font-size: 0.9rem;">
+                                        🚪 Logout
+                                    </button>
+                                </form>
+                            </li>
+                        </ul>
+                    </div>
+                {% else %}
+                    <a class="nav-link" href="{% url 'login' %}" style="color: #d4af37; font-size: 1.2rem; padding: 5px;" title="Admin Login">
+                        🔐
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+    </nav>
+
+    <!-- Detail Header -->
+    <div class="detail-header">
+        <div class="container">
+            <h1 class="bride-name-title">{{ bride.name }}</h1>
+            <div class="decorative-border"></div>
+            <div class="bride-details">
+                📍 {{ bride.location }} • 📅 {{ bride.event_date|date:"F d, Y" }}
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="container py-5">
+        <!-- Back button moved to navbar -->
+
+        {% if all_images %}
+            <!-- Image Carousel -->
+            <div class="carousel-container position-relative mb-5">
+                <div class="image-counter">
+                    {{ total_images }} Image{{ total_images|pluralize }}
+                </div>
+                
+                <div id="brideCarousel" class="carousel slide" data-bs-ride="carousel">
+                    <div class="carousel-indicators">
+                        {% for image in all_images %}
+                            <button type="button" data-bs-target="#brideCarousel" data-bs-slide-to="{{ forloop.counter0 }}" 
+                                    {% if forloop.first %}class="active"{% endif %}></button>
+                        {% endfor %}
+                    </div>
+                    
+                    <div class="carousel-inner">
+                        {% for image in all_images %}
+                            <div class="carousel-item {% if forloop.first %}active{% endif %}">
+                                <img src="{{ image.url }}" class="carousel-image" alt="{{ image.caption }}" loading="lazy" onerror="this.style.background='linear-gradient(135deg, #f8f4f0, #d4af37)'; this.alt='Image not available';">
+                                <div class="carousel-caption">
+                                    <h5>{{ image.caption }}</h5>
+                                    {% if image.is_main %}
+                                        <p><span class="badge bg-warning text-dark">Main Photo</span></p>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                    
+                    {% if total_images > 1 %}
+                        <button class="carousel-control-prev" type="button" data-bs-target="#brideCarousel" data-bs-slide="prev">
+                            <span class="carousel-control-prev-icon"></span>
+                        </button>
+                        <button class="carousel-control-next" type="button" data-bs-target="#brideCarousel" data-bs-slide="next">
+                            <span class="carousel-control-next-icon"></span>
+                        </button>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Bride Information Card -->
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    <div class="bride-info-card">
+                        <h3 class="info-title">About {{ bride.name }}</h3>
+                        
+                        <div class="info-detail">
+                            <span class="info-label">Name:</span>
+                            <span>{{ bride.name }}</span>
+                        </div>
+                        
+                        <div class="info-detail">
+                            <span class="info-label">Location:</span>
+                            <span>{{ bride.location }}</span>
+                        </div>
+                        
+                        <div class="info-detail">
+                            <span class="info-label">Event Date:</span>
+                            <span>{{ bride.event_date|date:"F d, Y" }}</span>
+                        </div>
+                        
+                        <div class="info-detail">
+                            <span class="info-label">Total Images:</span>
+                            <span>{{ total_images }} Photo{{ total_images|pluralize }}</span>
+                        </div>
+                        
+                        {% if bride.tagline %}
+                            <div class="tagline-card">
+                                "{{ bride.tagline }}"
+                            </div>
+                        {% endif %}
+                        
+                        {% if user.is_authenticated and user.is_staff %}
+                            <div class="mt-4 pt-3 border-top">
+                                <a href="/admin/BridesOfSaima/bride/{{ bride.pk }}/change/" class="btn btn-outline-primary btn-sm">
+                                    ✏️ Edit Bride Details
+                                </a>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        {% else %}
+            <div class="text-center py-5">
+                <h3 style="font-family: 'Dancing Script', cursive; color: #d4af37; font-size: 2.5rem;">
+                    No Images Available
+                </h3>
+                <p class="text-muted">Images for this bride haven't been uploaded yet.</p>
+                {% if user.is_authenticated and user.is_staff %}
+                    <a href="/admin/BridesOfSaima/bride/{{ bride.pk }}/change/" class="back-button">
+                        Add Images
+                    </a>
+                {% endif %}
+            </div>
+        {% endif %}
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Keyboard Navigation for Carousel -->
+    <script>
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'ArrowLeft') {
+                document.querySelector('.carousel-control-prev').click();
+            } else if (e.key === 'ArrowRight') {
+                document.querySelector('.carousel-control-next').click();
+            }
+        });
+        
+        // Auto-pause carousel on hover
+        const carousel = document.getElementById('brideCarousel');
+        if (carousel) {
+            carousel.addEventListener('mouseenter', function() {
+                bootstrap.Carousel.getInstance(carousel).pause();
+            });
+        }
+    </script>
+</body>
+</html>

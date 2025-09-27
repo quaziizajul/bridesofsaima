@@ -1,0 +1,220 @@
+{% extends 'BridesOfSaima/base_invoice.html' %}
+
+{% block title %}{{ title }} - Brides of Saima{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2 class="invoice-title">
+                <i class="fas fa-file-plus text-warning"></i>
+                {{ title }}
+            </h2>
+            <a href="{% url 'BridesOfSaima:invoice_list' %}" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i> Back to List
+            </a>
+        </div>
+
+        <form method="post" class="invoice-form">
+            {% csrf_token %}
+            
+            <div class="card shadow mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0"><i class="fas fa-info-circle"></i> Invoice Information</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="{{ invoice_form.customer.id_for_label }}" class="form-label">
+                                    Customer <span class="text-danger">*</span>
+                                </label>
+                                {{ invoice_form.customer }}
+                                <div class="form-text">
+                                    <a href="{% url 'BridesOfSaima:customer_create' %}" target="_blank">
+                                        <i class="fas fa-plus"></i> Add new customer
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="mb-3">
+                                <label for="{{ invoice_form.issue_date.id_for_label }}" class="form-label">
+                                    Issue Date <span class="text-danger">*</span>
+                                </label>
+                                {{ invoice_form.issue_date }}
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="mb-3">
+                                <label for="{{ invoice_form.due_date.id_for_label }}" class="form-label">
+                                    Due Date <span class="text-danger">*</span>
+                                </label>
+                                {{ invoice_form.due_date }}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label for="{{ invoice_form.payment_status.id_for_label }}" class="form-label">
+                                    Payment Status
+                                </label>
+                                {{ invoice_form.payment_status }}
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label for="{{ invoice_form.discount_percentage.id_for_label }}" class="form-label">
+                                    Discount (%)
+                                </label>
+                                {{ invoice_form.discount_percentage }}
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label for="{{ invoice_form.tax_percentage.id_for_label }}" class="form-label">
+                                    Tax (%)
+                                </label>
+                                {{ invoice_form.tax_percentage }}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="{{ invoice_form.advance_amount.id_for_label }}" class="form-label">
+                                    Advance Amount (₹)
+                                </label>
+                                {{ invoice_form.advance_amount }}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="{{ invoice_form.notes.id_for_label }}" class="form-label">
+                            Notes
+                        </label>
+                        {{ invoice_form.notes }}
+                    </div>
+                </div>
+            </div>
+
+            <div class="card shadow mb-4">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0"><i class="fas fa-list"></i> Invoice Items</h5>
+                </div>
+                <div class="card-body">
+                    {{ formset.management_form }}
+                    
+                    <div id="invoice-items">
+                        {% for form in formset %}
+                            <div class="item-form border rounded p-3 mb-3" data-form-idx="{{ forloop.counter0 }}">
+                                {% if form.instance.pk %}{{ form.id }}{% endif %}
+                                
+                                <div class="row">
+                                    <div class="col-md-5">
+                                        <div class="mb-3">
+                                            <label class="form-label">Description <span class="text-danger">*</span></label>
+                                            {{ form.description }}
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <div class="mb-3">
+                                            <label class="form-label">Quantity <span class="text-danger">*</span></label>
+                                            {{ form.quantity }}
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="mb-3">
+                                            <label class="form-label">Unit Price <span class="text-danger">*</span></label>
+                                            {{ form.unit_price }}
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <div class="mb-3">
+                                            <label class="form-label">Actions</label>
+                                            <div>
+                                                {% if form.instance.pk %}
+                                                    {{ form.DELETE }}
+                                                    <label for="{{ form.DELETE.id_for_label }}" class="form-label text-danger">
+                                                        <i class="fas fa-trash"></i> Delete
+                                                    </label>
+                                                {% else %}
+                                                    <button type="button" class="btn btn-sm btn-outline-danger remove-item">
+                                                        <i class="fas fa-trash"></i> Remove
+                                                    </button>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                    
+                    <button type="button" id="add-item" class="btn btn-outline-primary">
+                        <i class="fas fa-plus"></i> Add Item
+                    </button>
+                </div>
+            </div>
+
+            <div class="d-flex justify-content-between">
+                <a href="{% url 'BridesOfSaima:invoice_list' %}" class="btn btn-secondary">
+                    <i class="fas fa-times"></i> Cancel
+                </a>
+                <button type="submit" class="btn btn-primary btn-lg">
+                    <i class="fas fa-save"></i> Save Invoice
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const addButton = document.getElementById('add-item');
+    const itemsContainer = document.getElementById('invoice-items');
+    let formIdx = {{ formset.total_form_count }};
+    
+    addButton.addEventListener('click', function() {
+        const emptyForm = document.querySelector('.item-form').cloneNode(true);
+        
+        // Update form index
+        emptyForm.setAttribute('data-form-idx', formIdx);
+        emptyForm.innerHTML = emptyForm.innerHTML.replace(/__prefix__/g, formIdx);
+        
+        // Clear values
+        emptyForm.querySelectorAll('input, textarea, select').forEach(function(input) {
+            input.value = '';
+            input.checked = false;
+        });
+        
+        // Add remove button functionality
+        const removeBtn = emptyForm.querySelector('.remove-item');
+        if (removeBtn) {
+            removeBtn.addEventListener('click', function() {
+                emptyForm.remove();
+            });
+        }
+        
+        itemsContainer.appendChild(emptyForm);
+        formIdx++;
+        
+        // Update total forms count
+        document.getElementById('id_form-TOTAL_FORMS').value = formIdx;
+    });
+    
+    // Add remove functionality to existing remove buttons
+    document.querySelectorAll('.remove-item').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            btn.closest('.item-form').remove();
+        });
+    });
+});
+</script>
+{% endblock %}
