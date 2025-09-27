@@ -52,6 +52,14 @@
                                 </span>
                             </li>
                             <li><hr class="dropdown-divider" style="border-color: #d4af37;"></li>
+                            {% if user.is_staff %}
+                                <li>
+                                    <a class="dropdown-item" href="/admin/" style="color: #fff; font-size: 0.9rem;" target="_blank">
+                                        ⚙️ Django Admin
+                                    </a>
+                                </li>
+                                <li><hr class="dropdown-divider" style="border-color: #d4af37;"></li>
+                            {% endif %}
                             <li>
                                 <form method="post" action="{% url 'logout' %}" style="margin: 0;">
                                     {% csrf_token %}
@@ -85,8 +93,9 @@
                 <div class="cta-buttons">
                     <button class="btn btn-primary" onclick="window.location.href='{% url 'BridesOfSaima:brides_gallery' %}'">My Brides</button>
                     {% if user.is_authenticated and user.is_staff %}
-                        <button class="btn btn-secondary" onclick="window.location.href='{% url 'BridesOfSaima:invoice_create' %}'">Generate Invoice</button>
-                        <button class="btn btn-outline-light" onclick="window.location.href='{% url 'BridesOfSaima:customer_create' %}'">Add Customer</button>
+                        <button class="btn btn-secondary" onclick="window.location.href='{% url 'BridesOfSaima:invoice_create' %)'">Generate Invoice</button>
+                        <button class="btn btn-outline-light" onclick="window.location.href='{% url 'BridesOfSaima:customer_list' %}'">Manage Customers</button>
+                        <button class="btn btn-outline-light" onclick="window.location.href='{% url 'BridesOfSaima:reports_dashboard' %}'">Reports</button>
                     {% endif %}
                 </div>
             </div>
@@ -98,11 +107,11 @@
             <div class="decorative-border"></div>
             <div class="features-grid">
                 <div class="feature scroll-animate">
-                    <h3>� Bridal Makeup</h3>
+                    <h3>👰 Bridal Makeup</h3>
                     <p>Stunning bridal makeup artistry that enhances your natural beauty for your special day. Professional techniques and premium products for a flawless, radiant look that lasts.</p>
                 </div>
                 <div class="feature scroll-animate">
-                    <h3>� Engagement Makeup</h3>
+                    <h3>💍 Engagement Makeup</h3>
                     <p>Perfect makeup for your engagement ceremony with elegant and sophisticated looks that capture the joy and excitement of this milestone moment.</p>
                 </div>
                 <div class="feature scroll-animate">
@@ -142,6 +151,74 @@
             observer.observe(element);
         });
     </script>
+
+    <!-- Location & Map Section -->
+    <div class="location-section" style="background: linear-gradient(135deg, #f8f4f0 0%, #fff 50%, #f9f6f2 100%); padding: 60px 0;">
+        <div class="container">
+            <div class="decorative-border"></div>
+            <h4 style="color: #d4af37; font-family: 'Dancing Script', cursive; font-size: 2.5rem; margin-bottom: 1rem; text-align: center;">Visit Our Studio</h4>
+            <p style="color: #666; font-size: 1.2rem; margin-bottom: 3rem; text-align: center;">Experience our premium bridal makeup services at our beautiful studio</p>
+            
+            <div class="row align-items-center">
+                <div class="col-lg-6 mb-4">
+                    <div class="address-info" style="background: white; padding: 40px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); border: 1px solid rgba(212, 175, 55, 0.2);">
+                        <h5 style="color: #d4af37; font-family: 'Dancing Script', cursive; font-size: 1.8rem; margin-bottom: 1.5rem;">
+                            📍 Studio Address
+                        </h5>
+                        <div class="address-details" style="color: #555; font-size: 1.1rem; line-height: 1.8;">
+                            <p style="margin-bottom: 0.8rem;">
+                                <strong>Brides Of Saima</strong>
+                            </p>
+                            <p style="margin-bottom: 0.8rem;">
+                                Dewan Babar Chowk, Judges Court Rd<br>
+                                Midnapore, West Bengal 721101
+                            </p>
+                            <p style="margin-bottom: 0.8rem;">
+                                <span style="color: #d4af37;">📞</span> <strong>Phone:</strong> +91 6290434601
+                            </p>
+                            <p style="margin-bottom: 0.8rem;">
+                                <span style="color: #d4af37;">✉️</span> <strong>Email:</strong> sksaima821@gmail.com
+                            </p>
+                            <p style="margin-bottom: 1.5rem;">
+                                <span style="color: #d4af37;">🕒</span> <strong>Hours:</strong><br>
+                                Mon-Sat: 9:00 AM - 7:00 PM<br>
+                                Sunday: By Appointment Only
+                            </p>
+                            <div class="contact-buttons">
+                                <a href="tel:+916290434601" class="btn btn-outline-primary btn-sm me-2" style="border-color: #d4af37; color: #d4af37;">
+                                    📞 Call Now
+                                </a>
+                                <a href="https://maps.google.com/?q=22.416183313619655,87.31448779376171" target="_blank" class="btn btn-outline-primary btn-sm" style="border-color: #d4af37; color: #d4af37;">
+                                    🗺️ Get Directions
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-lg-6 mb-4">
+                    <div class="map-container" style="background: white; padding: 20px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); border: 1px solid rgba(212, 175, 55, 0.2);">
+                        <div style="position: relative; overflow: hidden; border-radius: 15px;">
+                            <iframe 
+                                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3688.1234567890123!2d87.31448779376171!3d22.416183313619655!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMjLCsDI0JzU4LjMiTiA4N8KwMTgnNTIuMiJF!5e0!3m2!1sen!2sin!4v1634567890123!5m2!1sen!2sin" 
+                                width="100%" 
+                                height="350" 
+                                style="border:0; border-radius: 15px;" 
+                                allowfullscreen="" 
+                                loading="lazy" 
+                                referrerpolicy="no-referrer-when-downgrade">
+                            </iframe>
+                            <div style="position: absolute; top: 15px; right: 15px; background: rgba(212, 175, 55, 0.9); color: white; padding: 8px 12px; border-radius: 20px; font-size: 0.9rem; font-weight: 600;">
+                                📍 Studio Location
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="decorative-border" style="margin-top: 3rem;"></div>
+        </div>
+    </div>
 
     <!-- Instagram QR Code Section - At Very Bottom -->
     <div class="instagram-qr-center">

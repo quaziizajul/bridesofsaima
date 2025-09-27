@@ -1,6 +1,6 @@
 from django import forms
 from django.forms import inlineformset_factory
-from .models import Customer, Invoice, InvoiceItem
+from .models import Customer, Invoice, InvoiceItem, Bride
 from datetime import date, timedelta
 
 class CustomerForm(forms.ModelForm):
@@ -102,6 +102,34 @@ class InvoiceItemForm(forms.ModelForm):
                 'step': '0.01',
                 'min': '0.01',
                 'placeholder': '0.00'
+            }),
+        }
+
+class BrideForm(forms.ModelForm):
+    """Form for bride information"""
+    class Meta:
+        model = Bride
+        fields = ['name', 'location', 'event_date', 'tagline', 'image']
+        widgets = {
+            'name': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Enter bride name'
+            }),
+            'location': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Enter location'
+            }),
+            'event_date': forms.DateInput(attrs={
+                'class': 'form-control',
+                'type': 'date'
+            }),
+            'tagline': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Enter tagline or quote'
+            }),
+            'image': forms.FileInput(attrs={
+                'class': 'form-control',
+                'accept': 'image/*'
             }),
         }
 

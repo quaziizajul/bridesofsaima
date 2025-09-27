@@ -14,7 +14,7 @@
             min-height: 100vh;
         }
         
-        .customer-header {
+        .edit-header {
             background: linear-gradient(135deg, rgba(212, 175, 55, 0.1) 0%, rgba(0, 0, 0, 0.6) 50%, rgba(212, 175, 55, 0.1) 100%),
                         url('{% static "BridesOfSaima/images/Bride1.jpg" %}');
             background-size: cover;
@@ -24,7 +24,7 @@
             text-align: center;
         }
         
-        .customer-title {
+        .edit-title {
             font-family: 'Dancing Script', cursive;
             font-size: 3rem;
             color: #d4af37;
@@ -82,8 +82,36 @@
             transform: translateY(-2px);
         }
         
+        .current-image {
+            max-width: 200px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            margin-bottom: 1rem;
+        }
+        
+        .back-button {
+            background: linear-gradient(45deg, #d4af37, #f4e4a6);
+            border: none;
+            color: white;
+            padding: 8px 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            border-radius: 20px;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.3s ease;
+            margin-bottom: 1.5rem;
+        }
+        
+        .back-button:hover {
+            background: linear-gradient(45deg, #b8941f, #d4af37);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(212, 175, 55, 0.4);
+            color: white;
+        }
+        
         @media (max-width: 768px) {
-            .customer-title {
+            .edit-title {
                 font-size: 2rem;
             }
             
@@ -92,7 +120,7 @@
                 padding: 30px 20px;
             }
             
-            .customer-header {
+            .edit-header {
                 padding: 80px 0 30px 0;
             }
         }
@@ -107,9 +135,9 @@
             </a>
             
             <div class="navbar-nav d-flex align-items-center flex-row flex-nowrap">
-                <!-- Back to Customers Button -->
-                <a href="{% url 'BridesOfSaima:customer_list' %}" class="btn btn-outline-light btn-sm me-2" style="color: #d4af37; border-color: #d4af37; padding: 5px 12px; font-size: 0.8rem;" title="Back to Customers">
-                    ← Customers
+                <!-- Back to Gallery Button -->
+                <a href="{% url 'BridesOfSaima:brides_gallery' %}" class="btn btn-outline-light btn-sm me-2" style="color: #d4af37; border-color: #d4af37; padding: 5px 12px; font-size: 0.8rem;" title="Back to Gallery">
+                    ← Gallery
                 </a>
                 
                 <!-- Admin Icon -->
@@ -155,10 +183,10 @@
         </div>
     </nav>
 
-    <!-- Customer Header -->
-    <div class="customer-header">
+    <!-- Edit Header -->
+    <div class="edit-header">
         <div class="container">
-            <h1 class="customer-title">{{ title }}</h1>
+            <h1 class="edit-title">{{ title }}</h1>
         </div>
     </div>
 
@@ -174,13 +202,13 @@
                 {% endfor %}
             {% endif %}
 
-            <form method="post">
+            <form method="post" enctype="multipart/form-data">
                 {% csrf_token %}
                 
                 <div class="row">
                     <div class="col-md-6">
                         <div class="mb-3">
-                            <label for="{{ form.name.id_for_label }}" class="form-label">Customer Name <span class="text-danger">*</span></label>
+                            <label for="{{ form.name.id_for_label }}" class="form-label">Bride Name</label>
                             {{ form.name }}
                             {% if form.name.errors %}
                                 <div class="text-danger small">{{ form.name.errors }}</div>
@@ -188,28 +216,42 @@
                         </div>
                         
                         <div class="mb-3">
-                            <label for="{{ form.email.id_for_label }}" class="form-label">Email Address</label>
-                            {{ form.email }}
-                            {% if form.email.errors %}
-                                <div class="text-danger small">{{ form.email.errors }}</div>
+                            <label for="{{ form.location.id_for_label }}" class="form-label">Location</label>
+                            {{ form.location }}
+                            {% if form.location.errors %}
+                                <div class="text-danger small">{{ form.location.errors }}</div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="{{ form.event_date.id_for_label }}" class="form-label">Event Date</label>
+                            {{ form.event_date }}
+                            {% if form.event_date.errors %}
+                                <div class="text-danger small">{{ form.event_date.errors }}</div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="{{ form.tagline.id_for_label }}" class="form-label">Tagline</label>
+                            {{ form.tagline }}
+                            {% if form.tagline.errors %}
+                                <div class="text-danger small">{{ form.tagline.errors }}</div>
                             {% endif %}
                         </div>
                     </div>
                     
                     <div class="col-md-6">
                         <div class="mb-3">
-                            <label for="{{ form.phone.id_for_label }}" class="form-label">Phone Number</label>
-                            {{ form.phone }}
-                            {% if form.phone.errors %}
-                                <div class="text-danger small">{{ form.phone.errors }}</div>
+                            <label for="{{ form.image.id_for_label }}" class="form-label">Main Image</label>
+                            {% if bride.image %}
+                                <div class="mb-2">
+                                    <img src="{{ bride.image.url }}" alt="{{ bride.name }}" class="current-image">
+                                    <p class="text-muted small">Current image - upload a new one to replace</p>
+                                </div>
                             {% endif %}
-                        </div>
-                        
-                        <div class="mb-3">
-                            <label for="{{ form.address.id_for_label }}" class="form-label">Address</label>
-                            {{ form.address }}
-                            {% if form.address.errors %}
-                                <div class="text-danger small">{{ form.address.errors }}</div>
+                            {{ form.image }}
+                            {% if form.image.errors %}
+                                <div class="text-danger small">{{ form.image.errors }}</div>
                             {% endif %}
                         </div>
                     </div>
@@ -217,14 +259,8 @@
                 
                 <div class="row mt-4">
                     <div class="col-12 text-center">
-                        <button type="submit" class="btn btn-primary me-3">
-                            {% if customer %}
-                                💾 Update Customer
-                            {% else %}
-                                ➕ Save Customer
-                            {% endif %}
-                        </button>
-                        <a href="{% url 'BridesOfSaima:customer_list' %}" class="btn btn-secondary">Cancel</a>
+                        <button type="submit" class="btn btn-primary me-3">Save Changes</button>
+                        <a href="{% url 'BridesOfSaima:brides_gallery' %}" class="btn btn-secondary">Cancel</a>
                     </div>
                 </div>
             </form>

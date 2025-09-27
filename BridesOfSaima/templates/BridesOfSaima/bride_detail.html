@@ -404,6 +404,14 @@
                                 </span>
                             </li>
                             <li><hr class="dropdown-divider" style="border-color: #d4af37;"></li>
+                            {% if user.is_staff %}
+                                <li>
+                                    <a class="dropdown-item" href="/admin/" style="color: #fff; font-size: 0.9rem;" target="_blank">
+                                        ⚙️ Django Admin
+                                    </a>
+                                </li>
+                                <li><hr class="dropdown-divider" style="border-color: #d4af37;"></li>
+                            {% endif %}
                             <li>
                                 <form method="post" action="{% url 'logout' %}" style="margin: 0;">
                                     {% csrf_token %}

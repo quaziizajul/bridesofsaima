@@ -5,7 +5,7 @@ from django.db import transaction
 from django.http import HttpResponse
 from django.template.loader import render_to_string
 from .models import Invoice, Customer, InvoiceItem, Bride
-from .forms import InvoiceForm, InvoiceItemFormSet, CustomerForm
+from .forms import InvoiceForm, InvoiceItemFormSet, CustomerForm, BrideForm
 
 def is_staff_user(user):
     """Check if user is staff/admin"""
@@ -100,6 +100,17 @@ def invoice_edit(request, pk):
     })
 
 @user_passes_test(is_staff_user, login_url='/accounts/login/')
+def customer_list(request):
+    """
+    Display list of all customers (Admin only)
+    """
+    customers = Customer.objects.all().order_by('name')
+    return render(request, 'BridesOfSaima/customer_list.html', {
+        'customers': customers,
+        'title': 'Customer List'
+    })
+
+@user_passes_test(is_staff_user, login_url='/accounts/login/')
 def customer_create(request):
     """
     Create a new customer (Admin only)
@@ -109,7 +120,7 @@ def customer_create(request):
         if form.is_valid():
             customer = form.save()
             messages.success(request, f'Customer {customer.name} created successfully!')
-            return redirect('BridesOfSaima:invoice_create')
+            return redirect('BridesOfSaima:customer_list')
         else:
             messages.error(request, 'Please correct the errors in customer form.')
     else:
@@ -119,6 +130,152 @@ def customer_create(request):
         'form': form,
         'title': 'Add New Customer'
     })
+
+@user_passes_test(is_staff_user, login_url='/accounts/login/')
+def customer_edit(request, pk):
+    """
+    Edit existing customer (Admin only)
+    """
+    customer = get_object_or_404(Customer, pk=pk)
+    
+    if request.method == 'POST':
+        form = CustomerForm(request.POST, instance=customer)
+        if form.is_valid():
+            form.save()
+            messages.success(request, f'Customer {customer.name} updated successfully!')
+            return redirect('BridesOfSaima:customer_list')
+        else:
+            messages.error(request, 'Please correct the errors in the form.')
+    else:
+        form = CustomerForm(instance=customer)
+    
+    return render(request, 'BridesOfSaima/customer_form.html', {
+        'form': form,
+        'customer': customer,
+        'title': f'Edit Customer: {customer.name}'
+    })
+
+@user_passes_test(is_staff_user, login_url='/accounts/login/')
+def reports_dashboard(request):
+    """
+    Reports dashboard for bookings and income analysis (Admin only)
+    """
+    from django.db.models import Sum, Count, Q
+    from datetime import datetime, date
+    import calendar
+    
+    # Get filter parameters
+    month = request.GET.get('month')
+    year = request.GET.get('year')
+    
+    # Default to current month/year if not specified
+    current_date = date.today()
+    if not month:
+        month = current_date.month
+    else:
+        month = int(month)
+    
+    if not year:
+        year = current_date.year
+    else:
+        year = int(year)
+    
+    # Base queryset for invoices
+    invoices = Invoice.objects.all()
+    
+    # Filter by month/year if specified
+    if month and year:
+        invoices = invoices.filter(
+            issue_date__year=year,
+            issue_date__month=month
+        )
+    elif year:
+        invoices = invoices.filter(issue_date__year=year)
+    
+    # Calculate statistics using invoice methods
+    total_bookings = invoices.count()
+    total_advance = invoices.aggregate(total=Sum('advance_amount'))['total'] or 0
+    
+    # Calculate total revenue and due amounts using invoice methods
+    total_revenue = 0
+    total_due = 0
+    for invoice in invoices:
+        total_revenue += invoice.get_total()
+        total_due += invoice.get_due_amount()
+    
+    # Payment status breakdown (fix payment status values)
+    paid_invoices = invoices.filter(payment_status='paid').count()
+    pending_invoices = invoices.filter(payment_status='pending').count()
+    partial_invoices = invoices.filter(payment_status='partially_paid').count()
+    
+    # Monthly data for chart (last 12 months)
+    monthly_data = []
+    current_month = month
+    current_year = year
+    
+    for i in range(12):
+        month_invoices = Invoice.objects.filter(
+            issue_date__year=current_year,
+            issue_date__month=current_month
+        )
+        
+        # Calculate monthly revenue using invoice methods
+        monthly_revenue = 0
+        monthly_advance = 0
+        for invoice in month_invoices:
+            monthly_revenue += invoice.get_total()
+            monthly_advance += invoice.advance_amount
+        
+        monthly_data.append({
+            'month': calendar.month_name[current_month],
+            'year': current_year,
+            'bookings': month_invoices.count(),
+            'revenue': float(monthly_revenue),
+            'advance': float(monthly_advance)
+        })
+        
+        # Move to previous month
+        current_month -= 1
+        if current_month == 0:
+            current_month = 12
+            current_year -= 1
+    
+    monthly_data.reverse()  # Show chronological order
+    
+    # Recent invoices with calculated totals
+    recent_invoices = invoices.select_related('customer').order_by('-issue_date')[:10]
+    
+    # Add calculated fields to invoices for template
+    invoices_with_totals = []
+    for invoice in invoices.select_related('customer').order_by('-issue_date'):
+        invoice.total_amount = invoice.get_total()
+        invoice.due_amount = invoice.get_due_amount()
+        invoices_with_totals.append(invoice)
+    
+    # Generate month/year options for filters
+    years = list(range(2020, current_date.year + 2))
+    months = [(i, calendar.month_name[i]) for i in range(1, 13)]
+    
+    context = {
+        'title': 'Bookings & Income Report',
+        'selected_month': month,
+        'selected_year': year,
+        'month_name': calendar.month_name[month],
+        'months': months,
+        'years': years,
+        'total_bookings': total_bookings,
+        'total_revenue': total_revenue,
+        'total_advance': total_advance,
+        'total_due': total_due,
+        'paid_invoices': paid_invoices,
+        'pending_invoices': pending_invoices,
+        'partial_invoices': partial_invoices,
+        'monthly_data': monthly_data,
+        'recent_invoices': recent_invoices,
+        'invoices': invoices_with_totals
+    }
+    
+    return render(request, 'BridesOfSaima/reports_dashboard.html', context)
 
 def invoice_print(request, pk):
     """
@@ -148,4 +305,26 @@ def bride_detail(request, pk):
         'bride': bride,
         'all_images': all_images,
         'total_images': len(all_images)
+    })
+
+@user_passes_test(is_staff_user, login_url='/accounts/login/')
+def bride_edit(request, pk):
+    """Edit existing bride (Admin only)"""
+    bride = get_object_or_404(Bride, pk=pk)
+    
+    if request.method == 'POST':
+        form = BrideForm(request.POST, request.FILES, instance=bride)
+        if form.is_valid():
+            form.save()
+            messages.success(request, f'Bride {bride.name} updated successfully!')
+            return redirect('BridesOfSaima:brides_gallery')
+        else:
+            messages.error(request, 'Please correct the errors in the form.')
+    else:
+        form = BrideForm(instance=bride)
+    
+    return render(request, 'BridesOfSaima/bride_edit.html', {
+        'form': form,
+        'bride': bride,
+        'title': f'Edit {bride.name}'
     })

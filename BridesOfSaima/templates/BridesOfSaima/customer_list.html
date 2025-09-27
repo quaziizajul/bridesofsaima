@@ -32,54 +32,95 @@
             text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
         }
         
-        .form-container {
+        .customer-card {
             background: white;
-            border-radius: 20px;
+            border-radius: 15px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            padding: 40px;
-            margin: -30px auto 50px auto;
-            max-width: 800px;
+            padding: 25px;
+            margin-bottom: 20px;
             border: 1px solid rgba(212, 175, 55, 0.2);
-        }
-        
-        .form-label {
-            font-weight: 600;
-            color: #333;
-            margin-bottom: 0.5rem;
-        }
-        
-        .form-control:focus {
-            border-color: #d4af37;
-            box-shadow: 0 0 0 0.2rem rgba(212, 175, 55, 0.25);
-        }
-        
-        .btn-primary {
-            background: linear-gradient(45deg, #d4af37, #f4e4a6);
-            border: none;
-            padding: 12px 30px;
-            font-weight: 600;
-            border-radius: 25px;
             transition: all 0.3s ease;
         }
         
-        .btn-primary:hover {
+        .customer-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+            border-color: #d4af37;
+        }
+        
+        .customer-name {
+            font-family: 'Dancing Script', cursive;
+            font-size: 1.8rem;
+            color: #d4af37;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+        
+        .customer-info {
+            color: #666;
+            font-size: 1rem;
+            line-height: 1.6;
+        }
+        
+        .customer-info strong {
+            color: #333;
+        }
+        
+        .btn-edit {
+            background: linear-gradient(45deg, #d4af37, #f4e4a6);
+            border: none;
+            color: white;
+            font-weight: 600;
+            border-radius: 20px;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-edit:hover {
             background: linear-gradient(45deg, #b8941f, #d4af37);
             transform: translateY(-2px);
             box-shadow: 0 5px 15px rgba(212, 175, 55, 0.4);
+            color: white;
         }
         
-        .btn-secondary {
-            background: #6c757d;
+        .btn-add-customer {
+            background: linear-gradient(45deg, #d4af37, #f4e4a6);
             border: none;
+            color: white;
             padding: 12px 30px;
             font-weight: 600;
             border-radius: 25px;
+            text-decoration: none;
+            display: inline-block;
             transition: all 0.3s ease;
+            margin-bottom: 2rem;
         }
         
-        .btn-secondary:hover {
-            background: #5a6268;
+        .btn-add-customer:hover {
+            background: linear-gradient(45deg, #b8941f, #d4af37);
             transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(212, 175, 55, 0.4);
+            color: white;
+        }
+        
+        .no-customers {
+            text-align: center;
+            padding: 60px 20px;
+            color: #666;
+        }
+        
+        .no-customers h3 {
+            font-family: 'Dancing Script', cursive;
+            color: #d4af37;
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .decorative-border {
+            width: 80px;
+            height: 2px;
+            background: linear-gradient(45deg, #d4af37, #f4e4a6);
+            margin: 0 auto 1rem auto;
+            border-radius: 2px;
         }
         
         @media (max-width: 768px) {
@@ -87,13 +128,16 @@
                 font-size: 2rem;
             }
             
-            .form-container {
-                margin: -20px 15px 30px 15px;
-                padding: 30px 20px;
-            }
-            
             .customer-header {
                 padding: 80px 0 30px 0;
+            }
+            
+            .customer-card {
+                padding: 20px;
+            }
+            
+            .customer-name {
+                font-size: 1.5rem;
             }
         }
     </style>
@@ -107,9 +151,9 @@
             </a>
             
             <div class="navbar-nav d-flex align-items-center flex-row flex-nowrap">
-                <!-- Back to Customers Button -->
-                <a href="{% url 'BridesOfSaima:customer_list' %}" class="btn btn-outline-light btn-sm me-2" style="color: #d4af37; border-color: #d4af37; padding: 5px 12px; font-size: 0.8rem;" title="Back to Customers">
-                    ← Customers
+                <!-- Back to Home Button -->
+                <a href="{% url 'BridesOfSaima:homepage' %}" class="btn btn-outline-light btn-sm me-2" style="color: #d4af37; border-color: #d4af37; padding: 5px 12px; font-size: 0.8rem;" title="Back to Home">
+                    ← Home
                 </a>
                 
                 <!-- Admin Icon -->
@@ -159,76 +203,80 @@
     <div class="customer-header">
         <div class="container">
             <h1 class="customer-title">{{ title }}</h1>
+            <div class="decorative-border"></div>
         </div>
     </div>
 
-    <!-- Form Content -->
-    <div class="container">
-        <div class="form-container">
-            {% if messages %}
-                {% for message in messages %}
-                    <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
-                        {{ message }}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    <!-- Customer Content -->
+    <div class="container py-5">
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        <div class="text-center mb-4">
+            <a href="{% url 'BridesOfSaima:customer_create' %}" class="btn-add-customer">
+                ➕ Add New Customer
+            </a>
+        </div>
+
+        {% if customers %}
+            <div class="row">
+                {% for customer in customers %}
+                    <div class="col-lg-6 col-md-12 mb-4">
+                        <div class="customer-card">
+                            <div class="d-flex justify-content-between align-items-start mb-3">
+                                <h3 class="customer-name">{{ customer.name }}</h3>
+                                <a href="{% url 'BridesOfSaima:customer_edit' customer.id %}" class="btn btn-edit btn-sm">
+                                    ✏️ Edit
+                                </a>
+                            </div>
+                            
+                            <div class="customer-info">
+                                {% if customer.email %}
+                                    <p class="mb-2">
+                                        <strong>📧 Email:</strong> 
+                                        <a href="mailto:{{ customer.email }}" style="color: #d4af37;">{{ customer.email }}</a>
+                                    </p>
+                                {% endif %}
+                                
+                                {% if customer.phone %}
+                                    <p class="mb-2">
+                                        <strong>📞 Phone:</strong> 
+                                        <a href="tel:{{ customer.phone }}" style="color: #d4af37;">{{ customer.phone }}</a>
+                                    </p>
+                                {% endif %}
+                                
+                                {% if customer.address %}
+                                    <p class="mb-2">
+                                        <strong>📍 Address:</strong> {{ customer.address }}
+                                    </p>
+                                {% endif %}
+                                
+                                <p class="mb-0 text-muted small">
+                                    <strong>Added:</strong> {{ customer.created_at|date:"F d, Y" }}
+                                </p>
+                            </div>
+                        </div>
                     </div>
                 {% endfor %}
-            {% endif %}
-
-            <form method="post">
-                {% csrf_token %}
-                
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="mb-3">
-                            <label for="{{ form.name.id_for_label }}" class="form-label">Customer Name <span class="text-danger">*</span></label>
-                            {{ form.name }}
-                            {% if form.name.errors %}
-                                <div class="text-danger small">{{ form.name.errors }}</div>
-                            {% endif %}
-                        </div>
-                        
-                        <div class="mb-3">
-                            <label for="{{ form.email.id_for_label }}" class="form-label">Email Address</label>
-                            {{ form.email }}
-                            {% if form.email.errors %}
-                                <div class="text-danger small">{{ form.email.errors }}</div>
-                            {% endif %}
-                        </div>
-                    </div>
-                    
-                    <div class="col-md-6">
-                        <div class="mb-3">
-                            <label for="{{ form.phone.id_for_label }}" class="form-label">Phone Number</label>
-                            {{ form.phone }}
-                            {% if form.phone.errors %}
-                                <div class="text-danger small">{{ form.phone.errors }}</div>
-                            {% endif %}
-                        </div>
-                        
-                        <div class="mb-3">
-                            <label for="{{ form.address.id_for_label }}" class="form-label">Address</label>
-                            {{ form.address }}
-                            {% if form.address.errors %}
-                                <div class="text-danger small">{{ form.address.errors }}</div>
-                            {% endif %}
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="row mt-4">
-                    <div class="col-12 text-center">
-                        <button type="submit" class="btn btn-primary me-3">
-                            {% if customer %}
-                                💾 Update Customer
-                            {% else %}
-                                ➕ Save Customer
-                            {% endif %}
-                        </button>
-                        <a href="{% url 'BridesOfSaima:customer_list' %}" class="btn btn-secondary">Cancel</a>
-                    </div>
-                </div>
-            </form>
-        </div>
+            </div>
+        {% else %}
+            <div class="no-customers">
+                <h3>No Customers Yet</h3>
+                <div class="decorative-border"></div>
+                <p>Start building your customer database by adding your first customer.</p>
+                <p class="mt-3">
+                    <a href="{% url 'BridesOfSaima:customer_create' %}" class="btn-add-customer">
+                        Add First Customer
+                    </a>
+                </p>
+            </div>
+        {% endif %}
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
