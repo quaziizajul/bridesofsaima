@@ -93,7 +93,7 @@
                 <div class="cta-buttons">
                     <button class="btn btn-primary" onclick="window.location.href='{% url 'BridesOfSaima:brides_gallery' %}'">My Brides</button>
                     {% if user.is_authenticated and user.is_staff %}
-                        <button class="btn btn-secondary" onclick="window.location.href='{% url 'BridesOfSaima:invoice_create' %)'">Generate Invoice</button>
+                        <button class="btn btn-secondary" onclick="window.location.href='{% url 'BridesOfSaima:invoice_create' %}'">Generate Invoice</button>
                         <button class="btn btn-outline-light" onclick="window.location.href='{% url 'BridesOfSaima:customer_list' %}'">Manage Customers</button>
                         <button class="btn btn-outline-light" onclick="window.location.href='{% url 'BridesOfSaima:reports_dashboard' %}'">Reports</button>
                     {% endif %}
