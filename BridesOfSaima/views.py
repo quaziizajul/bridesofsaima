@@ -160,122 +160,156 @@ def reports_dashboard(request):
     """
     Reports dashboard for bookings and income analysis (Admin only)
     """
-    from django.db.models import Sum, Count, Q
-    from datetime import datetime, date
-    import calendar
-    
-    # Get filter parameters
-    month = request.GET.get('month')
-    year = request.GET.get('year')
-    
-    # Default to current month/year if not specified
-    current_date = date.today()
-    if not month:
-        month = current_date.month
-    else:
-        month = int(month)
-    
-    if not year:
-        year = current_date.year
-    else:
-        year = int(year)
-    
-    # Base queryset for invoices
-    invoices = Invoice.objects.all()
-    
-    # Filter by month/year if specified
-    if month and year:
-        invoices = invoices.filter(
-            issue_date__year=year,
-            issue_date__month=month
-        )
-    elif year:
-        invoices = invoices.filter(issue_date__year=year)
-    
-    # Calculate statistics using invoice methods
-    total_bookings = invoices.count()
-    total_advance = invoices.aggregate(total=Sum('advance_amount'))['total'] or 0
-    
-    # Calculate total revenue and due amounts using invoice methods
-    total_revenue = 0
-    total_due = 0
-    for invoice in invoices:
-        total_revenue += invoice.get_total()
-        total_due += invoice.get_due_amount()
-    
-    # Payment status breakdown (fix payment status values)
-    paid_invoices = invoices.filter(payment_status='paid').count()
-    pending_invoices = invoices.filter(payment_status='pending').count()
-    partial_invoices = invoices.filter(payment_status='partially_paid').count()
-    
-    # Monthly data for chart (last 12 months)
-    monthly_data = []
-    current_month = month
-    current_year = year
-    
-    for i in range(12):
-        month_invoices = Invoice.objects.filter(
-            issue_date__year=current_year,
-            issue_date__month=current_month
-        )
+    try:
+        from django.db.models import Sum, Count, Q
+        from datetime import datetime, date
+        import calendar
+        import json
         
-        # Calculate monthly revenue using invoice methods
-        monthly_revenue = 0
-        monthly_advance = 0
-        for invoice in month_invoices:
-            monthly_revenue += invoice.get_total()
-            monthly_advance += invoice.advance_amount
+        # Get filter parameters
+        month = request.GET.get('month')
+        year = request.GET.get('year')
         
-        monthly_data.append({
-            'month': calendar.month_name[current_month],
-            'year': current_year,
-            'bookings': month_invoices.count(),
-            'revenue': float(monthly_revenue),
-            'advance': float(monthly_advance)
-        })
+        # Convert to integers if provided, otherwise keep as None for "All" filter
+        current_date = date.today()
+        if month:
+            try:
+                month = int(month)
+            except ValueError:
+                month = None
+        else:
+            month = None
         
-        # Move to previous month
-        current_month -= 1
-        if current_month == 0:
-            current_month = 12
-            current_year -= 1
-    
-    monthly_data.reverse()  # Show chronological order
-    
-    # Recent invoices with calculated totals
-    recent_invoices = invoices.select_related('customer').order_by('-issue_date')[:10]
-    
-    # Add calculated fields to invoices for template
-    invoices_with_totals = []
-    for invoice in invoices.select_related('customer').order_by('-issue_date'):
-        invoice.total_amount = invoice.get_total()
-        invoice.due_amount = invoice.get_due_amount()
-        invoices_with_totals.append(invoice)
-    
-    # Generate month/year options for filters
-    years = list(range(2020, current_date.year + 2))
-    months = [(i, calendar.month_name[i]) for i in range(1, 13)]
-    
-    context = {
-        'title': 'Bookings & Income Report',
-        'selected_month': month,
-        'selected_year': year,
-        'month_name': calendar.month_name[month],
-        'months': months,
-        'years': years,
-        'total_bookings': total_bookings,
-        'total_revenue': total_revenue,
-        'total_advance': total_advance,
-        'total_due': total_due,
-        'paid_invoices': paid_invoices,
-        'pending_invoices': pending_invoices,
-        'partial_invoices': partial_invoices,
-        'monthly_data': monthly_data,
-        'recent_invoices': recent_invoices,
-        'invoices': invoices_with_totals
-    }
-    
-    return render(request, 'BridesOfSaima/reports_dashboard.html', context)
+        if year:
+            try:
+                year = int(year)
+            except ValueError:
+                year = None
+        else:
+            year = None
+        
+        # Base queryset for invoices
+        invoices = Invoice.objects.all()
+        
+        # Apply filters only if specified (otherwise show all data)
+        if month and year:
+            invoices = invoices.filter(
+                issue_date__year=year,
+                issue_date__month=month
+            )
+        elif year and not month:
+            invoices = invoices.filter(issue_date__year=year)
+        elif month and not year:
+            # If only month is selected, show that month for all years
+            invoices = invoices.filter(issue_date__month=month)
+        
+        # Calculate statistics using invoice methods
+        total_bookings = invoices.count()
+        total_advance_result = invoices.aggregate(total=Sum('advance_amount'))
+        total_advance = float(total_advance_result['total'] or 0)
+        
+        # Calculate total revenue and due amounts using invoice methods
+        total_revenue = 0
+        total_due = 0
+        for invoice in invoices:
+            try:
+                total_revenue += float(invoice.get_total())
+                total_due += float(invoice.get_due_amount())
+            except (TypeError, ValueError, AttributeError):
+                # Handle potential conversion errors
+                continue
+        
+        # Payment status breakdown
+        paid_invoices = invoices.filter(payment_status='paid').count()
+        pending_invoices = invoices.filter(payment_status='pending').count()
+        partial_invoices = invoices.filter(payment_status='partially_paid').count()
+        
+        # Monthly data for chart (last 12 months) - simplified version
+        monthly_data = []
+        
+        # If no specific year is selected, use current year for chart
+        chart_year = year if year else current_date.year
+        
+        # Generate data for all 12 months of the selected/current year
+        for month_num in range(1, 13):
+            try:
+                month_invoices = Invoice.objects.filter(
+                    issue_date__year=chart_year,
+                    issue_date__month=month_num
+                )
+                
+                # Calculate monthly totals
+                monthly_revenue = 0
+                monthly_advance = 0
+                for invoice in month_invoices:
+                    try:
+                        monthly_revenue += float(invoice.get_total())
+                        monthly_advance += float(invoice.advance_amount or 0)
+                    except (TypeError, ValueError, AttributeError):
+                        continue
+                
+                monthly_data.append({
+                    'month': calendar.month_name[month_num],
+                    'year': chart_year,
+                    'bookings': month_invoices.count(),
+                    'revenue': round(monthly_revenue, 2),
+                    'advance': round(monthly_advance, 2)
+                })
+                    
+            except Exception:
+                # Skip this month if there's an error
+                continue
+        
+        # Recent invoices with calculated totals
+        recent_invoices = invoices.select_related('customer').order_by('-issue_date')[:10]
+        
+        # Add calculated fields to invoices for template
+        invoices_with_totals = []
+        for invoice in invoices.select_related('customer').order_by('-issue_date'):
+            try:
+                invoice.total_amount = float(invoice.get_total())
+                invoice.due_amount = float(invoice.get_due_amount())
+                invoices_with_totals.append(invoice)
+            except (TypeError, ValueError, AttributeError):
+                # Skip invoices with calculation errors
+                continue
+        
+        # Generate month/year options for filters
+        years = list(range(2020, current_date.year + 2))
+        months = [(i, calendar.month_name[i]) for i in range(1, 13)]
+        
+        context = {
+            'title': 'Bookings & Income Report',
+            'selected_month': month,
+            'selected_year': year,
+            'month_name': calendar.month_name[month] if month else 'All Months',
+            'months': months,
+            'years': years,
+            'total_bookings': total_bookings,
+            'total_revenue': round(total_revenue, 2),
+            'total_advance': round(total_advance, 2),
+            'total_due': round(total_due, 2),
+            'paid_invoices': paid_invoices,
+            'pending_invoices': pending_invoices,
+            'partial_invoices': partial_invoices,
+            'monthly_data': monthly_data,
+            'recent_invoices': recent_invoices,
+            'invoices': invoices_with_totals
+        }
+        
+        # For debugging, use the debug template first
+        # return render(request, 'BridesOfSaima/reports_debug.html', context)
+        return render(request, 'BridesOfSaima/reports_dashboard.html', context)
+        
+    except Exception as e:
+        # Fallback error handling with debug info
+        from django.contrib import messages
+        import traceback
+        error_details = traceback.format_exc()
+        messages.error(request, f'Error loading reports: {str(e)}')
+        # In development, you might want to print or log the error details
+        print(f"Reports Error: {error_details}")
+        return redirect('BridesOfSaima:homepage')
 
 def invoice_print(request, pk):
     """
