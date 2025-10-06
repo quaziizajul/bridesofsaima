@@ -232,6 +232,10 @@
             <p style="font-size: 1.1rem; margin-bottom: 0;">
                 {% if selected_month and selected_year %}
                     {{ month_name }} {{ selected_year }} Report
+                {% elif selected_year %}
+                    {{ selected_year }} Report
+                {% elif selected_month %}
+                    {{ month_name }} (All Years) Report
                 {% else %}
                     All Time Report
                 {% endif %}
