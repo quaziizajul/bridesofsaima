@@ -2,8 +2,37 @@ from django.db import models
 from django.core.validators import MinValueValidator
 from decimal import Decimal
 import uuid
+import os
 
 # Create your models here.
+
+def bride_main_image_path(instance, filename):
+    """Generate upload path for main bride images"""
+    from django.conf import settings
+    import os
+    import stat
+    import logging
+    
+    try:
+        # Create the directory if it doesn't exist
+        upload_dir = os.path.join(settings.MEDIA_ROOT, 'brides')
+        os.makedirs(upload_dir, exist_ok=True)
+        
+        # Set permissions for PythonAnywhere (755 for directories)
+        if not os.name == 'nt':  # Not Windows
+            try:
+                os.chmod(upload_dir, stat.S_IRWXU | stat.S_IRGRP | stat.S_IXGRP | stat.S_IROTH | stat.S_IXOTH)
+            except (OSError, PermissionError):
+                pass  # Ignore permission errors
+        
+        # Log successful directory creation
+        logging.info(f"Created/verified directory: {upload_dir}")
+        
+    except Exception as e:
+        # Log any errors but don't break the upload
+        logging.error(f"Error creating bride main image directory: {e}")
+    
+    return f'brides/{filename}'
 
 class Bride(models.Model):
     """Model for showcasing brides gallery"""
@@ -11,7 +40,7 @@ class Bride(models.Model):
     location = models.CharField(max_length=200, help_text="Wedding/event location")
     event_date = models.DateField(help_text="Date of the makeup/event")
     tagline = models.CharField(max_length=300, help_text="Special tagline or description")
-    image = models.ImageField(upload_to='brides/', help_text="Main bride photo for gallery thumbnail")
+    image = models.ImageField(upload_to=bride_main_image_path, help_text="Main bride photo for gallery thumbnail")
     is_featured = models.BooleanField(default=False, help_text="Feature this bride on homepage")
     created_at = models.DateTimeField(auto_now_add=True)
     
@@ -48,10 +77,41 @@ class Bride(models.Model):
         verbose_name = "Bride"
         verbose_name_plural = "My Brides"
 
+def bride_additional_image_path(instance, filename):
+    """Generate upload path for additional bride images"""
+    import os
+    import stat
+    import logging
+    from django.conf import settings
+    
+    try:
+        # Create the directory if it doesn't exist
+        upload_dir = os.path.join(settings.MEDIA_ROOT, 'brides', 'additional')
+        os.makedirs(upload_dir, exist_ok=True)
+        
+        # Set permissions for PythonAnywhere (755 for directories)
+        if not os.name == 'nt':  # Not Windows
+            try:
+                # Set permissions for both parent and child directories
+                parent_dir = os.path.join(settings.MEDIA_ROOT, 'brides')
+                os.chmod(parent_dir, stat.S_IRWXU | stat.S_IRGRP | stat.S_IXGRP | stat.S_IROTH | stat.S_IXOTH)
+                os.chmod(upload_dir, stat.S_IRWXU | stat.S_IRGRP | stat.S_IXGRP | stat.S_IROTH | stat.S_IXOTH)
+            except (OSError, PermissionError):
+                pass  # Ignore permission errors
+        
+        # Log successful directory creation
+        logging.info(f"Created/verified directory: {upload_dir}")
+        
+    except Exception as e:
+        # Log any errors but don't break the upload
+        logging.error(f"Error creating bride additional image directory: {e}")
+    
+    return f'brides/additional/{filename}'
+
 class BrideImage(models.Model):
     """Model for additional bride images"""
     bride = models.ForeignKey(Bride, on_delete=models.CASCADE, related_name='additional_images')
-    image = models.ImageField(upload_to='brides/additional/', help_text="Additional bride photo")
+    image = models.ImageField(upload_to=bride_additional_image_path, help_text="Additional bride photo")
     caption = models.CharField(max_length=200, blank=True, help_text="Optional caption for this image")
     order = models.PositiveIntegerField(default=0, help_text="Display order (0 = first)")
     created_at = models.DateTimeField(auto_now_add=True)
